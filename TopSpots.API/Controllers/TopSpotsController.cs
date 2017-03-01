@@ -13,10 +13,12 @@ using TopSpots.API.Models;
 
 namespace TopSpots.API.Controllers
 {
-    [EnableCors("*", "*", "*")]
+    [EnableCors("http://localhost:8080", "*", "*")]
+    
     public class TopSpotsController : ApiController
     {
         // GET: api/TopSpots
+        [HttpGet]
         public IEnumerable<TopSpot> Get()
         {
             string json = File.ReadAllText("C:/Users/cherr/dev/TopSpots/TopSpots.API/TopSpots.API/topspots.json");
@@ -32,6 +34,7 @@ namespace TopSpots.API.Controllers
         }
 
         // POST: api/TopSpots
+        [HttpPost]
         public TopSpot Post(TopSpot spot)
         {
             string json = File.ReadAllText("C:/Users/cherr/dev/TopSpots/TopSpots.API/TopSpots.API/topspots.json");
@@ -48,35 +51,35 @@ namespace TopSpots.API.Controllers
 
         // PUT: api/TopSpots/5
         [HttpPut]
-        public HttpResponseMessage Put(int id, TopSpot spot)
+        public HttpResponseMessage Put(int id, [FromBody] TopSpot spot)
         {
             string json = File.ReadAllText("C:/Users/cherr/dev/TopSpots/TopSpots.API/TopSpots.API/topspots.json");
-            var output = JsonConvert.DeserializeObject<List<TopSpot>>(json);
+            var update = JsonConvert.DeserializeObject<List<TopSpot>>(json);
 
             if(spot.Name != null)
             {
-                output[id].Name = spot.Name;
+                update[id].Name = spot.Name;
             }
 
             if(spot.Description != null)
             {
-                output[id].Description = spot.Description;
+                update[id].Description = spot.Description;
             }
 
             if (spot.Location != null)
             {
-                output[id].Location[0] = spot.Location[0];
-                output[id].Location[1] = spot.Location[1];
+                update[id].Location[0] = spot.Location[0];
+                update[id].Location[1] = spot.Location[1];
             }
 
-            string newSpot = Newtonsoft.Json.JsonConvert.SerializeObject(output);
-            File.WriteAllText("C:/Users/cherr/dev/TopSpots/TopSpots.API/TopSpots.API/topspots.json", newSpot);
+            string updatedSpot = Newtonsoft.Json.JsonConvert.SerializeObject(update);
+            File.WriteAllText("C:/Users/cherr/dev/TopSpots/TopSpots.API/TopSpots.API/topspots.json", updatedSpot);
 
             return Request.CreateResponse(HttpStatusCode.OK,
             new
             {
                 value = spot,
-                message = "success!"
+                message = "Success! You've updated a spot!"
             });
 
         }
@@ -97,7 +100,7 @@ namespace TopSpots.API.Controllers
             return Request.CreateResponse(HttpStatusCode.OK,
             new
             {
-                message = "success!"
+                message = "Success! You've deleted a spot!"
             });
 
         }
